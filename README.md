@@ -4,7 +4,7 @@ Bài thi giữa kỳ môn **Phát triển phần mềm cho thiết bị di độ
 
 CineSeat là ứng dụng Android mô phỏng màn hình chọn ghế khi đặt vé xem phim. Toàn bộ phòng chiếu (208 ghế, màn chiếu, lối đi, nhãn hàng, nhãn phân khu) được vẽ trên **một Canvas duy nhất**. Người dùng kéo để di chuyển, chụm/mở hai ngón để phóng to/thu nhỏ quanh tâm hai ngón, và chạm vào từng ghế để chọn hoặc xem thông tin. Dữ liệu là dữ liệu giả lập (mock data); không có backend, API hay cơ sở dữ liệu.
 
-- Video demo: **[chèn đường dẫn video tại đây]**
+- Video demo: https://youtu.be/sNmorqEI0z0
 - Repository: https://github.com/Shinkiisme/cineseat
 
 ## 1. Tính năng
