@@ -36,5 +36,5 @@
 
 - [ ] Video dài 1–5 phút, xem được (đặt quyền "Anyone with the link" nếu dùng Google Drive hoặc YouTube unlisted).
 - [ ] Dán đường dẫn video và repository vào đầu `README.md`.
-- [ ] `git log` có ít nhất 5–7 commit có ý nghĩa (hiện có 6; các chỉnh sửa của bạn sau này nên được commit riêng).
+- [ ] `git log` có ít nhất 5–7 commit có ý nghĩa (hiện có 7; các chỉnh sửa của bạn sau này nên được commit riêng).
 - [ ] `./gradlew :app:assembleDebug` build được từ một bản clone sạch.
