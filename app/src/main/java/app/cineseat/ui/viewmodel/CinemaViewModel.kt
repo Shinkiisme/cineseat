@@ -16,11 +16,9 @@ import kotlinx.coroutines.flow.asStateFlow
  * All seat logic lives here. Every change is written to [SavedStateHandle] too, so the selection, mock bookings
  * and filter survive rotation (the ViewModel itself survives) and process death (the handle is restored).
  */
-class CinemaViewModel(
-    private val saved: SavedStateHandle,
-    seats: List<Seat> = SeatRepository.seats,
-) : ViewModel() {
-    private val byId = seats.associateBy { it.id }
+class CinemaViewModel(private val saved: SavedStateHandle) : ViewModel() {
+    private val seats: List<Seat> = SeatRepository.seats
+    private val byId = SeatRepository.byId
 
     private val _state = MutableStateFlow(
         CinemaUiState(
