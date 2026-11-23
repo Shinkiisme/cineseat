@@ -42,9 +42,9 @@ object SeatRepository {
                 val central = column in 4..11
                 val roll = random.nextFloat()
                 val (status, note) = when {
-                    row == 'A' && (number <= 2 || number >= 15) -> SeatStatus.BLOCKED to "Khu vực kỹ thuật, không mở bán"
-                    roll < 0.04f -> SeatStatus.BLOCKED to "Ghế đang bảo trì"
-                    roll < (if (central) 0.42f else 0.22f) -> SeatStatus.BOOKED to "Đã có khách đặt"
+                    row == 'A' && (number <= 2 || number >= 15) -> SeatStatus.BLOCKED to "khu vực kỹ thuật, không mở bán"
+                    roll < 0.04f -> SeatStatus.BLOCKED to "ghế đang bảo trì"
+                    roll < (if (central) 0.42f else 0.22f) -> SeatStatus.BOOKED to "khách khác đã đặt trước"
                     else -> SeatStatus.AVAILABLE to null
                 }
                 result += Seat("$row$number", row, number, type, status, column, span, note)

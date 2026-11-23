@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
@@ -108,6 +109,7 @@ fun CinemaCanvas(
 
     Canvas(
         modifier
+            .clipToBounds() // a zoomed map must not paint over the header and chips
             .onSizeChanged { canvasSize = it }
             .semantics { contentDescription = "Sơ đồ phòng chiếu với ${layout.seats.size} ghế" }
             .pointerInput(layout) {
@@ -155,17 +157,19 @@ fun CinemaCanvas(
         }
 
         // ---- Text, at screen positions ----
+        // Fixed-size text, but shrunk when zoomed far out so labels never crowd the rows (e.g. landscape).
+        val textScale = (CinemaLayout.ROW_PITCH * v.scale / (labels.rows[0].size.height * 1.6f)).coerceAtMost(1f)
         val screenLabelPos = v.toScreen(Offset(layout.seatAreaCenterX, layout.screenY + 14f))
-        drawCentered(labels.screen, screenLabelPos, Color(0xFF8F98B3))
+        drawCentered(labels.screen, screenLabelPos, Color(0xFF8F98B3), scale = textScale)
         for ((type, y) in layout.sectionHeaders) {
-            drawCentered(labels.sections.getValue(type), v.toScreen(Offset(layout.seatAreaCenterX, y)), type.color())
+            drawCentered(labels.sections.getValue(type), v.toScreen(Offset(layout.seatAreaCenterX, y)), type.color(), scale = textScale)
         }
         for ((index, rowAndY) in layout.rowCenters.withIndex()) {
             val (row, y) = rowAndY
             val label = labels.rows[index]
             val color = if (row in selectedRows) SeatColors.Selected else Color(0xFF8F98B3)
-            drawCentered(label, v.toScreen(Offset(layout.leftLabelX, y)), color)
-            drawCentered(label, v.toScreen(Offset(layout.rightLabelX, y)), color)
+            drawCentered(label, v.toScreen(Offset(layout.leftLabelX, y)), color, scale = textScale)
+            drawCentered(label, v.toScreen(Offset(layout.rightLabelX, y)), color, scale = textScale)
         }
         // Seat numbers only once seats are big enough to hold them.
         if (CinemaLayout.SEAT * v.scale >= 22.dp.toPx()) {
@@ -194,22 +198,24 @@ private class CanvasLabels(measurer: androidx.compose.ui.text.TextMeasurer) {
     }
 }
 
-private class SeatStrokes {
+internal class SeatStrokes {
     val outline = Stroke(width = 1.6f)
     val blocked = Stroke(width = 1.4f, pathEffect = PathEffect.dashPathEffect(floatArrayOf(3f, 2.5f)))
     val ring = Stroke(width = 2.2f)
     val screen = Stroke(width = 5f, cap = StrokeCap.Round)
 }
 
-private fun DrawScope.drawCentered(text: TextLayoutResult, center: Offset, color: Color, alpha: Float = 1f) {
-    drawText(text, color = color, topLeft = Offset(center.x - text.size.width / 2f, center.y - text.size.height / 2f), alpha = alpha)
+private fun DrawScope.drawCentered(text: TextLayoutResult, center: Offset, color: Color, alpha: Float = 1f, scale: Float = 1f) {
+    val topLeft = Offset(center.x - text.size.width / 2f, center.y - text.size.height / 2f)
+    if (scale >= 1f) drawText(text, color = color, topLeft = topLeft, alpha = alpha)
+    else withTransform({ scale(scale, scale, pivot = center) }) { drawText(text, color = color, topLeft = topLeft, alpha = alpha) }
 }
 
 /**
  * One seat, in world units. Status is told apart by more than colour: selected is solid with a tick,
  * booked is grey with a cross, blocked is a dashed outline with a slash, available is an outline in its type colour.
  */
-private fun DrawScope.drawSeat(r: Rect, type: SeatType, status: SeatStatus, alpha: Float, strokes: SeatStrokes) {
+internal fun DrawScope.drawSeat(r: Rect, type: SeatType, status: SeatStatus, alpha: Float, strokes: SeatStrokes) {
     val corner = CornerRadius(6f)
     val typeColor = type.color()
     when (status) {
@@ -219,6 +225,10 @@ private fun DrawScope.drawSeat(r: Rect, type: SeatType, status: SeatStatus, alph
         }
         SeatStatus.SELECTED -> {
             drawRoundRect(SeatColors.Selected, r.topLeft, r.size, corner, alpha = alpha)
+            // Tick in the top-right corner, so it does not cover the seat number.
+            val o = Offset(r.right - 9f, r.top + 7f)
+            drawLine(SeatColors.OnSelected, o + Offset(-3.5f, 0f), o + Offset(-1f, 2.5f), 1.6f, StrokeCap.Round, alpha = alpha)
+            drawLine(SeatColors.OnSelected, o + Offset(-1f, 2.5f), o + Offset(4f, -2.5f), 1.6f, StrokeCap.Round, alpha = alpha)
         }
         SeatStatus.BOOKED -> {
             drawRoundRect(SeatColors.Booked, r.topLeft, r.size, corner, alpha = alpha)
@@ -233,12 +243,9 @@ private fun DrawScope.drawSeat(r: Rect, type: SeatType, status: SeatStatus, alph
             drawLine(SeatColors.Blocked, Offset(r.left + 5f, r.bottom - 5f), Offset(r.right - 5f, r.top + 5f), 1.6f, StrokeCap.Round, alpha = alpha)
         }
     }
-    // Armrest bar: makes the shape read as a seat. Couple seats get a divider too.
+    // Armrest bar: makes the shape read as a seat.
     val barColor = if (status == SeatStatus.SELECTED) Color.White else typeColor
     if (status != SeatStatus.BLOCKED) {
         drawRoundRect(barColor, Offset(r.left + 5f, r.bottom - 5f), Size(r.width - 10f, 2.5f), CornerRadius(1.25f), alpha = (if (status == SeatStatus.BOOKED) 0.25f else 0.7f) * alpha)
-    }
-    if (type == SeatType.COUPLE && status != SeatStatus.BLOCKED) {
-        drawLine(barColor, Offset(r.center.x, r.top + 5f), Offset(r.center.x, r.bottom - 9f), 1.2f, alpha = 0.35f * alpha)
     }
 }
