@@ -179,13 +179,25 @@ Chưa kiểm chứng: pinch bằng tay trên máy thật; khôi phục sau khi h
 
 ## 12. Nhật ký sử dụng AI Agent
 
-**Agent:** Claude Code (model Claude Opus 5.5), chạy trong VS Code, có quyền đọc/ghi file trong thư mục dự án, chạy Gradle, `adb` và emulator.
+**Agent:** Claude Code (Claude Opus 5.5 cho phần lập trình, Claude Sonnet 5.5 cho một số chỉnh sửa nhỏ), chạy trong VS Code, được cấp quyền đọc/ghi file trong thư mục dự án, chạy Gradle, `adb` và emulator.
 
-**Nhiệm vụ đã giao:** đọc đề thi (PDF), chọn kiến trúc, viết toàn bộ mã nguồn, test, README và hướng dẫn quay video; commit theo từng mốc; không push.
+### Phần việc của sinh viên
 
-**File do Agent tạo:** toàn bộ file trong repository (cấu hình Gradle, `AndroidManifest.xml`, icon, mọi file `.kt` trong `main/`, `test/`, `androidTest/`, `README.md`, `DEMO_CHECKLIST.md`). Phiên bản Gradle/AGP/Compose được lấy theo một dự án Android khác của sinh viên trên cùng máy để build offline được.
+- **Chọn đề và đặt yêu cầu.** Chọn đề tài 2 (phòng chiếu rạp), tự viết bản mô tả sản phẩm gửi cho Agent: 14 hàng A–N, ba loại ghế và số lượng từng loại (128 + 64 + 16 = 208), bốn trạng thái, quy tắc tách trạng thái SELECTED khỏi dữ liệu gốc, công thức World ↔ Screen, yêu cầu về Bottom Sheet, bộ lọc, Reset View và xoay màn hình.
+- **Quyết định kỹ thuật và phạm vi.** Chọn Kotlin, Jetpack Compose, Material 3, MVVM với `StateFlow` và `SavedStateHandle`; cấm backend, Firebase, thư viện sơ đồ bên thứ ba và Button riêng cho từng ghế; đặt thứ tự ưu tiên (build được, Canvas, Pan/Zoom/hit-testing, đồng bộ Bottom Sheet, rồi mới đến UI) và yêu cầu không được tuyên bố đã kiểm thử khi chưa chạy.
+- **Giám sát và phản biện.** Yêu cầu commit theo từng mốc, không backdate, không push khi chưa cho phép. Chạy thử app trên emulator của mình và xem lại kết quả. Nhận xét hàng chip lọc bị cắt cứng ở mép màn hình khiến người dùng không biết còn kéo được, dẫn tới việc làm mờ dần mép hàng chip.
+- **Video demo.** Yêu cầu dùng Remotion cho phần dựng, chọn phụ đề thay cho giọng đọc, yêu cầu phong cách điện ảnh, yêu cầu sửa lời phụ đề cho bớt máy móc, nhắc tắt emulator khi render để tránh tràn RAM, rồi tự đăng video lên YouTube (chọn tiêu đề, mô tả, thumbnail).
+- **Nộp bài.** Quyết định tạo repository công khai và push, chọn giữ nguyên email trong lịch sử commit, yêu cầu gỡ các danh sách việc cần làm khỏi tài liệu.
 
-**Quy trình và các lỗi Agent tự phát hiện, sửa:**
+### Phần việc do Agent thực hiện
+
+- Viết toàn bộ mã nguồn, test và cấu hình Gradle theo yêu cầu ở trên: mọi file `.kt` trong `main/`, `test/`, `androidTest/`, `AndroidManifest.xml`, icon, `README.md`, `DEMO_CHECKLIST.md`.
+- Viết script quay màn hình bằng multi-touch qua console emulator và dựng video bằng Remotion (nằm ngoài repository này).
+- Phiên bản Gradle/AGP/Compose lấy theo một dự án Android khác của sinh viên trên cùng máy để build offline được.
+
+Vì mã do Agent viết, sinh viên cần đọc và giải thích được các phần cốt lõi trước khi vấn đáp. Chịu trách nhiệm nộp bài vẫn là của sinh viên.
+
+### Lỗi của Agent và cách xử lý
 
 | Bước | Vấn đề | Cách phát hiện | Cách sửa |
 |---|---|---|---|
@@ -197,4 +209,6 @@ Chưa kiểm chứng: pinch bằng tay trên máy thật; khôi phục sau khi h
 | Giao diện | Ghế "đang chọn" thiếu dấu tick như đã mô tả; vạch chia ghế đôi cắt ngang số ghế; lý do bị lặp chữ ("Đã đặt: Đã có khách đặt") | Chụp màn hình | Thêm tick, bỏ vạch chia, viết lại câu |
 | Kiểm thử thủ công | `connectedDebugAndroidTest` gỡ app sau khi chạy, nên một loạt lệnh chạm bằng adb rơi vào ứng dụng khác đang mở trên emulator | Chụp màn hình | Cài lại và kiểm tra app đang ở foreground trước khi chạm |
 
-**Hạn chế còn lại:** góc nhìn (pan/zoom) không được giữ khi xoay màn hình mà quay về mặc định cho kích thước mới (có chủ đích); ở chế độ ngang trên điện thoại, sơ đồ mặc định khá nhỏ vì phòng chiếu có dạng dọc, nên người dùng cần zoom; không giới hạn số ghế tối đa mỗi lần đặt.
+### Hạn chế còn lại
+
+Góc nhìn (pan/zoom) không được giữ khi xoay màn hình mà quay về mặc định cho kích thước mới (có chủ đích). Ở chế độ ngang trên điện thoại, sơ đồ mặc định khá nhỏ vì phòng chiếu có dạng dọc, nên người dùng cần zoom. Số ghế tối đa mỗi lần đặt không bị giới hạn.
