@@ -40,7 +40,8 @@ class GeometryTest {
         val from = Offset(300f, 400f)
         val pan = Offset(-25f, 60f)
         val worldUnderFingers = v.toWorld(from)
-        val next = v.zoomAndPan(from + pan, pan, 1.25f, 0.1f, 100f)
+        // `from` is the previous centroid, as detectTransformGestures reports it.
+        val next = v.zoomAndPan(from, pan, 1.25f, 0.1f, 100f)
         assertEquals(2.5f, next.scale, 1e-5f)
         near(from + pan, next.toScreen(worldUnderFingers))
     }

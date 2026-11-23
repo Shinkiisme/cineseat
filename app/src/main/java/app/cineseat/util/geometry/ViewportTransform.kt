@@ -15,14 +15,15 @@ data class Viewport(val scale: Float = 1f, val offset: Offset = Offset.Zero) {
     fun toScreen(world: Rect): Rect = Rect(toScreen(world.topLeft), toScreen(world.bottomRight))
 
     /**
-     * One gesture step. [centroid] is where the fingers are now, [pan] how far they moved since the last step,
-     * [zoom] the change in spread. The world point that was under the fingers (centroid - pan) ends up under
-     * them again at the new scale, so zooming stays centred on the fingers and pan and zoom can happen together.
+     * One gesture step, in the terms Compose's detectTransformGestures reports: [centroid] is where the fingers
+     * were at the previous event (it calls calculateCentroid(useCurrent = false)), [pan] how far they moved since,
+     * [zoom] the change in spread. The world point that was under the fingers ends up under them again, at their
+     * new position (centroid + pan) and the new scale, so zoom stays centred on the fingers even while panning.
      */
     fun zoomAndPan(centroid: Offset, pan: Offset, zoom: Float, minScale: Float, maxScale: Float): Viewport {
         val newScale = (scale * zoom).coerceIn(minScale, maxScale)
-        val anchor = toWorld(centroid - pan)
-        return Viewport(newScale, centroid - anchor * newScale)
+        val anchor = toWorld(centroid)
+        return Viewport(newScale, centroid + pan - anchor * newScale)
     }
 
     companion object {
