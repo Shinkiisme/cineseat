@@ -31,10 +31,3 @@
 | 15 | 3:00 | Mở sheet, xoay sang ngang | "Xoay màn hình: ghế đang chọn, tổng tiền, sheet mở đều giữ nguyên; bố cục ngang riêng." Pan/zoom/chạm thử một lần ở chế độ ngang. | Giữ trạng thái khi xoay, landscape |
 | 16 | 3:20 | Xoay lại dọc, nhấn "Đặt vé" | Thông báo thành công; các ghế vừa đặt chuyển sang "Đã đặt" (×); chạm vào thì thấy "bạn vừa đặt ghế này". | Đặt vé giả lập |
 | 17 | 3:35 | (Tùy chọn) Chuyển sang Android Studio, mở `ViewportTransform.kt` | Chỉ công thức `screen = world × scale + offset` và `zoomAndPan`. | Kiến trúc, tọa độ |
-
-## Kiểm tra trước khi nộp
-
-- [ ] Video dài 1–5 phút, xem được (đặt quyền "Anyone with the link" nếu dùng Google Drive hoặc YouTube unlisted).
-- [ ] Dán đường dẫn video và repository vào đầu `README.md`.
-- [ ] `git log` có ít nhất 5–7 commit có ý nghĩa (hiện có 7; các chỉnh sửa của bạn sau này nên được commit riêng).
-- [ ] `./gradlew :app:assembleDebug` build được từ một bản clone sạch.

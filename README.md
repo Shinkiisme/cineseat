@@ -198,12 +198,3 @@ Chưa kiểm chứng: pinch bằng tay trên máy thật; khôi phục sau khi h
 | Kiểm thử thủ công | `connectedDebugAndroidTest` gỡ app sau khi chạy, nên một loạt lệnh chạm bằng adb rơi vào ứng dụng khác đang mở trên emulator | Chụp màn hình | Cài lại và kiểm tra app đang ở foreground trước khi chạm |
 
 **Hạn chế còn lại:** góc nhìn (pan/zoom) không được giữ khi xoay màn hình mà quay về mặc định cho kích thước mới (có chủ đích); ở chế độ ngang trên điện thoại, sơ đồ mặc định khá nhỏ vì phòng chiếu có dạng dọc, nên người dùng cần zoom; không giới hạn số ghế tối đa mỗi lần đặt.
-
-**Phần sinh viên cần tự kiểm tra và hiểu trước khi nộp:**
-
-- [ ] Đọc và giải thích được `ViewportTransform.kt` (công thức zoom, giới hạn pan) và `SeatHitTester.kt`.
-- [ ] Tự pinch bằng tay trên emulator (Ctrl + kéo) hoặc máy thật, chạm ghế sau khi zoom.
-- [ ] Chạy lại `./gradlew :app:testDebugUnitTest :app:connectedDebugAndroidTest` trên máy mình.
-- [ ] Thử khôi phục sau khi process chết: bật "Don't keep activities" trong Developer options, hoặc dùng nút "Terminate application" trong Logcat của Android Studio.
-- [ ] Bổ sung đường dẫn video và repository ở đầu file này.
-- [ ] Ghi thêm vào nhật ký này mọi chỉnh sửa do chính sinh viên thực hiện.
